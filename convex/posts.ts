@@ -9,7 +9,7 @@ async function enrichPost(ctx: QueryCtx, post: Doc<'posts'>) {
 
   return {
     ...post,
-    authorUsername: author?.username ?? 'Unknown',
+    authorUsername: author?.username ?? author?.name ?? author?.email ?? 'Unknown',
     authorRole: author?.role ?? 'member',
     forumTitle: forum?.title ?? 'Unknown forum',
     forumSlug: forum?.slug ?? '',
@@ -82,7 +82,7 @@ export const vote = mutation({
 
     if (author) {
       await ctx.db.patch(post.authorId, {
-        reputation: author.reputation + args.delta,
+        reputation: (author.reputation ?? 0) + args.delta,
       })
     }
   },

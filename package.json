@@ -10,7 +10,10 @@
     "convex:deploy": "convex deploy"
   },
   "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.92",
     "@convex-dev/react-query": "^0.1.0",
+    "@oslojs/crypto": "^1.0.1",
     "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-router": "^1.169.2",
     "@tanstack/react-router-ssr-query": "^1.166.12",
@@ -22,6 +25,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
     "@vitejs/plugin-react": "^6.0.1",
     "typescript": "^5.8.0",
