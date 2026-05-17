@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { api } from '../../convex/_generated/api'
+import { AuthPanel } from '../components/organisms/AuthPanel'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -65,6 +66,8 @@ function Home() {
         </section>
 
         <aside className="side-stack" aria-label="Forum sidebar">
+          <AuthPanel />
+
           <section className="forum-panel compact-panel">
             <div className="panel-heading">
               <h2>Looking for Answers?</h2>

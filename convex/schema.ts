@@ -1,19 +1,29 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
+import { authTables } from '@convex-dev/auth/server'
 
 export default defineSchema({
+  ...authTables,
+
   users: defineTable({
-    username: v.string(),
-    email: v.string(),
-    avatarUrl: v.string(),
-    bio: v.string(),
-    role: v.union(v.literal('member'), v.literal('moderator'), v.literal('admin')),
-    postCount: v.number(),
-    reputation: v.number(),
-    joinedAt: v.number(),
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+    username: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    bio: v.optional(v.string()),
+    role: v.optional(v.union(v.literal('member'), v.literal('moderator'), v.literal('admin'))),
+    postCount: v.optional(v.number()),
+    reputation: v.optional(v.number()),
+    joinedAt: v.optional(v.number()),
   })
-    .index('by_username', ['username'])
-    .index('by_email', ['email']),
+    .index('email', ['email'])
+    .index('phone', ['phone'])
+    .index('by_username', ['username']),
 
   forums: defineTable({
     title: v.string(),

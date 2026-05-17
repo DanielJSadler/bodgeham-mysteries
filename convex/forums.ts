@@ -23,7 +23,7 @@ export const list = query({
                 _id: lastPost._id,
                 title: lastPost.title,
                 createdAt: lastPost.createdAt,
-                authorUsername: author?.username ?? 'Unknown',
+                authorUsername: author?.username ?? author?.name ?? author?.email ?? 'Unknown',
               }
             : null,
         }
