@@ -1,0 +1,9 @@
+node_modules/
+.output/
+.env.local
+.env.*.local
+dist/
+convex/_generated/
+convex-debug.log
+vite.config.ts.timestamp-*
+.env
