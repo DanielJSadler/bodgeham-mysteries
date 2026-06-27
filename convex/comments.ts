@@ -63,6 +63,20 @@ async function enrichComment(
   }
 }
 
+function compareComments(a: Doc<'comments'>, b: Doc<'comments'>, sortMode: 'newest' | 'mostPopular' | 'leastPopular') {
+  const score = (comment: Doc<'comments'>) => (comment.upvotes ?? 0) - (comment.downvotes ?? 0)
+
+  switch (sortMode) {
+    case 'mostPopular':
+      return score(b) - score(a) || b.createdAt - a.createdAt
+    case 'leastPopular':
+      return score(a) - score(b) || a.createdAt - b.createdAt
+    case 'newest':
+    default:
+      return b.createdAt - a.createdAt
+  }
+}
+
 export const listByPost = query({
   args: {
     postId: v.id('posts'),
@@ -90,6 +104,47 @@ export const listByPost = query({
         ),
       ),
     )
+  },
+})
+
+export const listByPostPage = query({
+  args: {
+    postId: v.id('posts'),
+    sortMode: v.union(v.literal('newest'), v.literal('mostPopular'), v.literal('leastPopular')),
+    cursor: v.union(v.string(), v.null()),
+    limit: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const viewerUserId = await getAuthUserId(ctx)
+    const votes = await viewerVoteMap(ctx, viewerUserId)
+    const post = await ctx.db.get(args.postId)
+    const forum = post ? await ctx.db.get(post.forumId) : null
+    const comments = await ctx.db
+      .query('comments')
+      .withIndex('by_post_created_at', (q) => q.eq('postId', args.postId))
+      .collect()
+
+    const canModerate =
+      !!viewerUserId && !!forum && (await canModerateForum(ctx, forum._id, viewerUserId))
+
+    const sortedComments = [...comments].sort((a, b) => compareComments(a, b, args.sortMode))
+    const start = args.cursor ? Number(args.cursor) : 0
+    const page = sortedComments.slice(start, start + args.limit)
+    const nextCursor = start + page.length < sortedComments.length ? String(start + page.length) : null
+
+    return {
+      comments: await Promise.all(
+        page.map((comment) =>
+          enrichComment(
+            ctx,
+            comment,
+            votes.get(comment._id),
+            !!viewerUserId && (comment.authorId === viewerUserId || canModerate),
+          ),
+        ),
+      ),
+      nextCursor,
+    }
   },
 })
 

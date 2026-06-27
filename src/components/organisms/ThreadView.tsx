@@ -1,17 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { convexQuery } from '@convex-dev/react-query'
 import { useConvexAuth } from '@convex-dev/auth/react'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
+import { useConvex } from 'convex/react'
 
 import { api } from '../../../convex/_generated/api'
 import type { ForumPost } from '../../lib/forum'
 import {
   forumSortOptions,
   formatForumDate,
-  sortForumComments,
   type ForumSortMode,
 } from '../../lib/forum'
 import { CommentComposer } from '../molecules/CommentComposer'
@@ -24,15 +23,48 @@ type ThreadViewProps = {
 
 export function ThreadView({ post }: ThreadViewProps) {
   const { isAuthenticated } = useConvexAuth()
+  const convex = useConvex()
   const navigate = useNavigate()
   const deleteComment = useMutation(api.comments.deleteComment)
   const deletePost = useMutation(api.posts.deletePost)
   const [error, setError] = useState<string | null>(null)
-  const { data: comments } = useSuspenseQuery(
-    convexQuery(api.comments.listByPost, { postId: post._id }),
-  )
   const [sortMode, setSortMode] = useState<ForumSortMode>('newest')
-  const sortedComments = sortForumComments(comments, sortMode)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+  const pageSize = 5
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } = useInfiniteQuery({
+    queryKey: ['comments', post._id, sortMode],
+    queryFn: async ({ pageParam }) =>
+      convex.query(api.comments.listByPostPage, {
+        postId: post._id,
+        sortMode,
+        cursor: pageParam ?? null,
+        limit: pageSize,
+      }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+  const comments = data?.pages.flatMap((page) => page.comments) ?? []
+
+  useEffect(() => {
+    const target = loadMoreRef.current
+
+    if (!target || !hasNextPage) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
+          void fetchNextPage()
+        }
+      },
+      { rootMargin: '200px' },
+    )
+
+    observer.observe(target)
+
+    return () => observer.disconnect()
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, comments.length, sortMode])
 
   return (
     <section className="forum-panel thread-panel">
@@ -101,8 +133,10 @@ export function ThreadView({ post }: ThreadViewProps) {
         {error ? <p className="thread-empty">{error}</p> : null}
 
         <div className="comment-list">
-          {sortedComments.length ? (
-            sortedComments.map((comment) => (
+          {isPending ? (
+            <p className="thread-empty">Loading comments...</p>
+          ) : comments.length ? (
+            comments.map((comment) => (
               <article className="comment-row" key={comment._id}>
                 <div className="comment-meta">
                   <strong className="username">{comment.authorUsername}</strong>
@@ -148,6 +182,11 @@ export function ThreadView({ post }: ThreadViewProps) {
           ) : (
             <p className="thread-empty">No comments yet.</p>
           )}
+          <div ref={loadMoreRef} className="comment-load-more">
+            {hasNextPage ? (
+              <p className="thread-empty">{isFetchingNextPage ? 'Loading more comments...' : 'Scroll for more comments.'}</p>
+            ) : null}
+          </div>
         </div>
       </section>
     </section>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { convexQuery } from '@convex-dev/react-query'
 import { useConvexAuth } from '@convex-dev/auth/react'
@@ -7,6 +7,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { api } from '../../convex/_generated/api'
+import { Pagination } from '../components/atoms/Pagination'
 import { AuthPanel } from '../components/organisms/AuthPanel'
 import { errorMessage } from '../lib/forum'
 
@@ -21,6 +22,14 @@ function Home() {
   const createForum = useMutation(api.forums.create)
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const pageSize = 5
+  const pageCount = Math.max(1, Math.ceil(forums.length / pageSize))
+  const visibleForums = forums.slice((page - 1) * pageSize, page * pageSize)
+
+  useEffect(() => {
+    setPage((currentPage) => Math.min(currentPage, pageCount))
+  }, [pageCount])
 
   return (
     <main className="forum-shell">
@@ -49,7 +58,7 @@ function Home() {
           </div>
 
           <div className="forum-list">
-            {forums.map((forum) => (
+            {visibleForums.map((forum) => (
               <article className="forum-row" key={forum._id}>
                 <div className={`forum-icon forum-icon-${forum.icon}`} aria-hidden="true" />
                 <div className="forum-copy">
@@ -76,6 +85,7 @@ function Home() {
               </article>
             ))}
           </div>
+          <Pagination page={page} pageCount={pageCount} onPageChange={setPage} label="Forum pagination" />
         </section>
 
         <aside className="side-stack" aria-label="Forum sidebar">

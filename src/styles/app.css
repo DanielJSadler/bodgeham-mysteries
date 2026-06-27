@@ -650,6 +650,41 @@ a:hover {
   text-align: center;
 }
 
+.pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 12px 12px;
+}
+
+.pagination button {
+  background: #10162a;
+  border: 1px outset #8f8f9d;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  height: 20px;
+  line-height: 1;
+  padding: 0 8px;
+}
+
+.pagination button:active {
+  border-style: inset;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: var(--void-muted);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
 .thread-action-button {
   background: #7e3b43;
   border: 1px outset #8f8f9d;
