@@ -109,6 +109,32 @@ a:hover {
   z-index: 1;
 }
 
+.visit-counter {
+  align-items: center;
+  background: #080b18;
+  border: 2px ridge var(--void-edge);
+  color: #ff4d8d;
+  display: grid;
+  font-family: 'Courier New', monospace;
+  gap: 1px;
+  justify-items: center;
+  min-width: 118px;
+  padding: 4px 8px 3px;
+  text-shadow: 1px 1px 0 #000;
+  margin-right: 4px;
+  z-index: 2;
+}
+
+.visit-counter span {
+  color: #fff;
+  font-size: 10px;
+}
+
+.visit-counter strong {
+  font-size: 18px;
+  letter-spacing: 0.12em;
+}
+
 .forum-nav {
   display: flex;
   gap: 8px;
@@ -807,7 +833,9 @@ a:hover {
 .image-modal-frame {
   background: #050713;
   border: 3px ridge var(--void-edge);
-  box-shadow: 0 0 0 1px #000 inset, 0 12px 40px rgba(0, 0, 0, 0.7);
+  box-shadow:
+    0 0 0 1px #000 inset,
+    0 12px 40px rgba(0, 0, 0, 0.7);
   display: grid;
   gap: 10px;
   max-height: 90vh;

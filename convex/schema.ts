@@ -20,10 +20,28 @@ export default defineSchema({
     postCount: v.optional(v.number()),
     reputation: v.optional(v.number()),
     joinedAt: v.optional(v.number()),
+    lastSeenAt: v.optional(v.number()),
   })
     .index('email', ['email'])
     .index('phone', ['phone'])
     .index('by_username', ['username']),
+
+  visitorSessions: defineTable({
+    visitorId: v.string(),
+    userId: v.optional(v.id('users')),
+    username: v.optional(v.string()),
+    lastSeenAt: v.number(),
+  })
+    .index('by_visitor', ['visitorId'])
+    .index('by_last_seen', ['lastSeenAt']),
+
+  pageVisits: defineTable({
+    path: v.string(),
+    count: v.number(),
+    lastVisitedAt: v.number(),
+  })
+    .index('by_path', ['path'])
+    .index('by_last_visited_at', ['lastVisitedAt']),
 
   forums: defineTable({
     title: v.string(),

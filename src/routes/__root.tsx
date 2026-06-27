@@ -3,6 +3,7 @@ import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanst
 import type { QueryClient } from '@tanstack/react-query'
 
 import appCss from '~/styles/app.css?url'
+import { ActivityHeartbeat } from '../components/organisms/ActivityHeartbeat'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -30,11 +31,12 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+      <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
+        <ActivityHeartbeat />
         {children}
         <Scripts />
       </body>

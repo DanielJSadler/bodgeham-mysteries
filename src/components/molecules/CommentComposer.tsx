@@ -45,8 +45,15 @@ export function CommentComposer({
         }
 
         try {
-          const imageStorageId = imageFile ? await uploadImageFile(imageFile, generateUploadUrl) : undefined
-          await createComment({ postId, parentCommentId, content, imageStorageId })
+          const imageStorageId = imageFile
+            ? await uploadImageFile(imageFile, generateUploadUrl)
+            : undefined
+          await createComment({
+            postId,
+            parentCommentId: parentCommentId ?? undefined,
+            content,
+            imageStorageId,
+          })
           form.reset()
           onCreated?.()
         } catch (caughtError) {

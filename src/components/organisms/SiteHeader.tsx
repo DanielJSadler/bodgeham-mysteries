@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import { VisitCounter } from './VisitCounter'
+
 type SiteNavItem = {
   href: string
   label: string
@@ -25,6 +27,7 @@ export function SiteHeader({ subtitle, navLabel, navItems }: SiteHeaderProps) {
           alt="Bodgeham Mysteries"
         />
         <p className="site-subtitle">{subtitle}</p>
+        <VisitCounter />
       </header>
 
       <nav className="forum-nav" aria-label={navLabel}>
