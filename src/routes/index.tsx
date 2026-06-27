@@ -8,8 +8,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { api } from '../../convex/_generated/api'
 import { Pagination } from '../components/atoms/Pagination'
-import { AuthPanel } from '../components/organisms/AuthPanel'
+import { CreateAccountPanel } from '../components/organisms/CreateAccountPanel'
+import { CreateBoardPanel } from '../components/organisms/CreateBoardPanel'
+import { OnlinePanel } from '../components/organisms/OnlinePanel'
 import { SiteHeader } from '../components/organisms/SiteHeader'
+import { SearchPanel } from '../components/organisms/SearchPanel'
 import { errorMessage } from '../lib/forum'
 import { uploadImageFile } from '../lib/upload'
 
@@ -98,93 +101,39 @@ function Home() {
         </section>
 
         <aside className="side-stack" aria-label="Forum sidebar">
-          <section className="forum-panel compact-panel">
-            <div className="panel-heading">
-              <h2>Create Board</h2>
-            </div>
-            {error ? <p className="thread-empty">{error}</p> : null}
-            {!isAuthenticated ? <p className="thread-empty">Sign in to create a board.</p> : null}
-            <form
-              className="compose-form"
-              onSubmit={async (event) => {
-                event.preventDefault()
-                setError(null)
+          <SearchPanel />
 
-                const form = event.currentTarget
-                const formData = new FormData(form)
-                const title = String(formData.get('title') ?? '').trim()
-                const description = String(formData.get('description') ?? '').trim()
-                const icon = formData.get('icon')
-                const iconFile = icon instanceof File && icon.size > 0 ? icon : null
+          <OnlinePanel />
 
-                if (!title || !description) {
-                  setError('Board title and description are required.')
-                  return
-                }
+          <CreateBoardPanel
+            error={error}
+            isAuthenticated={isAuthenticated}
+            onCreateBoard={async ({ title, description, iconFile, form }) => {
+              setError(null)
 
-                try {
-                  const iconStorageId = iconFile
-                    ? await uploadImageFile(iconFile, generateUploadUrl)
-                    : undefined
-                  const result = await createForum({
-                    title,
-                    description,
-                    iconStorageId,
-                  })
-                  form.reset()
-                  await navigate({ to: `/forums/${result.slug}` })
-                } catch (caughtError) {
-                  setError(errorMessage(caughtError, 'Could not create board.'))
-                }
-              }}
-            >
-              <label className="compose-field">
-                <span>Board title</span>
-                <input
-                  name="title"
-                  type="text"
-                  maxLength={80}
-                  required
-                  disabled={!isAuthenticated}
-                />
-              </label>
-              <label className="compose-field">
-                <span>Description</span>
-                <textarea name="description" rows={4} required disabled={!isAuthenticated} />
-              </label>
-              <label className="compose-field">
-                <span>Icon image</span>
-                <input name="icon" type="file" accept="image/*" disabled={!isAuthenticated} />
-              </label>
-              <div className="compose-actions">
-                <button className="thread-compose-submit" type="submit" disabled={!isAuthenticated}>
-                  Create board
-                </button>
-              </div>
-            </form>
-          </section>
+              if (!title || !description) {
+                setError('Board title and description are required.')
+                return
+              }
 
-          <AuthPanel />
+              try {
+                const iconStorageId = iconFile
+                  ? await uploadImageFile(iconFile, generateUploadUrl)
+                  : undefined
+                const result = await createForum({
+                  title,
+                  description,
+                  iconStorageId,
+                })
+                form.reset()
+                await navigate({ to: `/forums/${result.slug}` })
+              } catch (caughtError) {
+                setError(errorMessage(caughtError, 'Could not create board.'))
+              }
+            }}
+          />
 
-          <section className="forum-panel compact-panel">
-            <div className="panel-heading">
-              <h2>Looking for Answers?</h2>
-            </div>
-            <form className="search-box">
-              <input aria-label="Search forum" type="search" />
-              <button type="button">Search</button>
-            </form>
-            <p className="pager">&lt;&lt; - 1 . -- &gt;&gt;</p>
-          </section>
-
-          <section className="forum-panel compact-panel">
-            <div className="panel-heading">
-              <h2>Who is Online</h2>
-            </div>
-            <p>237 Users</p>
-            <p>11 Members</p>
-            <p>2 Admins</p>
-          </section>
+          <CreateAccountPanel />
         </aside>
       </div>
 
@@ -209,9 +158,7 @@ function Home() {
         </div>
       </section>
 
-      <footer className="site-footer">
-        Powered by Bodgeham Community Archives. Best viewed at 800x600.
-      </footer>
+      <footer className="site-footer">Powered by the Bodgeham Cryptozoological Society.</footer>
     </main>
   )
 }

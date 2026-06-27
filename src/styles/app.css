@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   --void: #03040e;
   --void-panel: #111823;
@@ -45,7 +51,7 @@ a:hover {
 
 .forum-shell {
   margin: 0 auto;
-  max-width: 920px;
+  max-width: 1140px;
   min-height: 100vh;
   padding: 6px 12px 28px;
   text-shadow: 1px 1px 0 #000;
@@ -118,7 +124,21 @@ a:hover {
 .forum-layout {
   display: grid;
   gap: 10px;
-  grid-template-columns: minmax(0, 1fr) 156px;
+  grid-template-columns: minmax(0, 1fr) 208px;
+  align-items: stretch;
+}
+
+.main-board {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-board .forum-list {
+  flex: 1;
+}
+
+.main-board .pagination {
+  margin-top: auto;
 }
 
 .forum-panel {
@@ -260,6 +280,7 @@ a:hover {
   display: grid;
   gap: 10px;
   align-content: start;
+  width: 100%;
 }
 
 .compact-panel {
