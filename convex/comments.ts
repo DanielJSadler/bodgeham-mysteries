@@ -63,6 +63,40 @@ async function enrichComment(
   }
 }
 
+async function enrichCommentTree(
+  ctx: QueryCtx,
+  comments: Doc<'comments'>[],
+  viewerVotes: Map<string, VoteValue>,
+  viewerUserId: string | null,
+  canModerate: boolean,
+  sortMode: 'newest' | 'mostPopular' | 'leastPopular',
+  parentCommentId: string | null = null,
+): Promise<Array<Awaited<ReturnType<typeof enrichComment>> & { replies: any[] }>> {
+  const directReplies = comments
+    .filter((comment) => (comment.parentCommentId ?? null) === parentCommentId)
+    .sort((a, b) => compareComments(a, b, sortMode))
+
+  return await Promise.all(
+    directReplies.map(async (comment) => ({
+      ...(await enrichComment(
+        ctx,
+        comment,
+        viewerVotes.get(comment._id),
+        !!viewerUserId && (comment.authorId === viewerUserId || canModerate),
+      )),
+      replies: await enrichCommentTree(
+        ctx,
+        comments,
+        viewerVotes,
+        viewerUserId,
+        canModerate,
+        sortMode,
+        comment._id,
+      ),
+    })),
+  )
+}
+
 function compareComments(a: Doc<'comments'>, b: Doc<'comments'>, sortMode: 'newest' | 'mostPopular' | 'leastPopular') {
   const score = (comment: Doc<'comments'>) => (comment.upvotes ?? 0) - (comment.downvotes ?? 0)
 
@@ -127,21 +161,32 @@ export const listByPostPage = query({
     const canModerate =
       !!viewerUserId && !!forum && (await canModerateForum(ctx, forum._id, viewerUserId))
 
-    const sortedComments = [...comments].sort((a, b) => compareComments(a, b, args.sortMode))
+    const rootComments = [...comments]
+      .filter((comment) => !comment.parentCommentId)
+      .sort((a, b) => compareComments(a, b, args.sortMode))
     const start = args.cursor ? Number(args.cursor) : 0
-    const page = sortedComments.slice(start, start + args.limit)
-    const nextCursor = start + page.length < sortedComments.length ? String(start + page.length) : null
+    const page = rootComments.slice(start, start + args.limit)
+    const nextCursor = start + page.length < rootComments.length ? String(start + page.length) : null
 
     return {
       comments: await Promise.all(
-        page.map((comment) =>
-          enrichComment(
+        page.map(async (comment) => ({
+          ...(await enrichComment(
             ctx,
             comment,
             votes.get(comment._id),
             !!viewerUserId && (comment.authorId === viewerUserId || canModerate),
+          )),
+          replies: await enrichCommentTree(
+            ctx,
+            comments,
+            votes,
+            viewerUserId,
+            canModerate,
+            args.sortMode,
+            comment._id,
           ),
-        ),
+        })),
       ),
       nextCursor,
     }
@@ -151,6 +196,7 @@ export const listByPostPage = query({
 export const create = mutation({
   args: {
     postId: v.id('posts'),
+    parentCommentId: v.optional(v.id('comments')),
     content: v.string(),
   },
   handler: async (ctx, args) => {
@@ -176,9 +222,19 @@ export const create = mutation({
     }
 
     const now = Date.now()
+
+    if (args.parentCommentId) {
+      const parentComment = await ctx.db.get(args.parentCommentId)
+
+      if (!parentComment || parentComment.postId !== args.postId) {
+        throw new Error('Parent comment not found')
+      }
+    }
+
     const commentId = await ctx.db.insert('comments', {
       authorId: userId,
       postId: args.postId,
+      parentCommentId: args.parentCommentId,
       content,
       createdAt: now,
       updatedAt: now,

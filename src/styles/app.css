@@ -696,6 +696,9 @@ a:hover {
   line-height: 1;
   padding: 0 6px;
 }
+.green-thread-action-button {
+  background-color: #668a4f;
+}
 
 .thread-action-button:active {
   border-style: inset;
@@ -742,6 +745,23 @@ a:hover {
   display: grid;
   gap: 6px;
   padding: 10px 12px;
+}
+
+.comment-replies {
+  border-left: 1px solid var(--void-rule);
+  display: grid;
+  gap: 0;
+  margin-left: 12px;
+  padding-left: 12px;
+}
+
+.comment-reply-box {
+  margin-left: 12px;
+}
+
+.comment-replies-toggle {
+  justify-self: start;
+  margin-top: 4px;
 }
 
 .comment-actions {

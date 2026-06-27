@@ -79,6 +79,7 @@ export default defineSchema({
   comments: defineTable({
     authorId: v.id('users'),
     postId: v.id('posts'),
+    parentCommentId: v.optional(v.id('comments')),
     content: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),

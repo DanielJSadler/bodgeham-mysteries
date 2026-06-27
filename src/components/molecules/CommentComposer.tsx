@@ -8,10 +8,19 @@ import { errorMessage } from '../../lib/forum'
 
 type CommentComposerProps = {
   postId: Id<'posts'>
+  parentCommentId?: Id<'comments'> | null
   isAuthenticated: boolean
+  submitLabel?: string
+  onCreated?: () => void
 }
 
-export function CommentComposer({ postId, isAuthenticated }: CommentComposerProps) {
+export function CommentComposer({
+  postId,
+  parentCommentId,
+  isAuthenticated,
+  submitLabel = 'Reply',
+  onCreated,
+}: CommentComposerProps) {
   const createComment = useMutation(api.comments.create)
   const [error, setError] = useState<string | null>(null)
 
@@ -32,8 +41,9 @@ export function CommentComposer({ postId, isAuthenticated }: CommentComposerProp
         }
 
         try {
-          await createComment({ postId, content })
+          await createComment({ postId, parentCommentId, content })
           form.reset()
+          onCreated?.()
         } catch (caughtError) {
           setError(errorMessage(caughtError, 'Could not add comment.'))
         }
@@ -47,7 +57,7 @@ export function CommentComposer({ postId, isAuthenticated }: CommentComposerProp
       </label>
       <div className="compose-actions">
         <button className="thread-compose-submit" type="submit" disabled={!isAuthenticated}>
-          Reply
+          {submitLabel}
         </button>
       </div>
     </form>

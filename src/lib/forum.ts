@@ -36,6 +36,8 @@ export type ForumComment = {
   downvotes: number
   viewerVote: VoteValue | null
   canDelete: boolean
+  parentCommentId?: Id<'comments'> | null
+  replies?: ForumComment[]
 }
 
 export type ForumPost = ForumThread & {
