@@ -32,9 +32,23 @@ export default defineSchema({
     category: v.string(),
     sortOrder: v.number(),
     icon: v.string(),
+    creatorId: v.optional(v.id('users')),
+    creatorUsername: v.optional(v.string()),
+    moderatorId: v.optional(v.id('users')),
+    moderatorUsername: v.optional(v.string()),
+    postCount: v.optional(v.number()),
   })
     .index('by_slug', ['slug'])
     .index('by_sort_order', ['sortOrder']),
+
+  forumModerators: defineTable({
+    forumId: v.id('forums'),
+    userId: v.id('users'),
+    addedAt: v.number(),
+  })
+    .index('by_forum', ['forumId'])
+    .index('by_forum_user', ['forumId', 'userId'])
+    .index('by_user', ['userId']),
 
   posts: defineTable({
     authorId: v.id('users'),
@@ -50,5 +64,37 @@ export default defineSchema({
   })
     .index('by_forum', ['forumId'])
     .index('by_created_at', ['createdAt'])
-    .index('by_forum_created_at', ['forumId', 'createdAt'])
+    .index('by_forum_created_at', ['forumId', 'createdAt']),
+
+  postVotes: defineTable({
+    userId: v.id('users'),
+    postId: v.id('posts'),
+    value: v.union(v.literal(1), v.literal(-1)),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_post_user', ['postId', 'userId'])
+    .index('by_user', ['userId']),
+
+  comments: defineTable({
+    authorId: v.id('users'),
+    postId: v.id('posts'),
+    content: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    upvotes: v.optional(v.number()),
+    downvotes: v.optional(v.number()),
+  })
+    .index('by_post_created_at', ['postId', 'createdAt'])
+    .index('by_created_at', ['createdAt']),
+
+  commentVotes: defineTable({
+    userId: v.id('users'),
+    commentId: v.id('comments'),
+    value: v.union(v.literal(1), v.literal(-1)),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_comment_user', ['commentId', 'userId'])
+    .index('by_user', ['userId']),
 })

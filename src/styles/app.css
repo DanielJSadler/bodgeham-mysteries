@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --void: #03040e;
@@ -21,10 +21,11 @@ body {
 body {
   margin: 0;
   background-color: var(--void);
-  background-image: linear-gradient(rgba(7, 10, 30, 0.45), rgba(7, 10, 30, 0.45)), url('/stars.png');
+  background-image:
+    linear-gradient(rgba(7, 10, 30, 0.45), rgba(7, 10, 30, 0.45)), url('/stars.png');
   background-repeat: repeat;
   color: var(--void-text);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   image-rendering: pixelated;
 }
 
@@ -71,17 +72,13 @@ a:hover {
   right: 4px;
 }
 
-.space-badge {
+.space-badger {
   align-self: start;
-  border: 2px solid #2d3651;
-  color: #9ab0cc;
-  font-family: "Courier New", monospace;
+  background: white;
   font-size: 24px;
   font-weight: 700;
   justify-self: center;
-  margin-top: 18px;
-  padding: 14px 10px;
-  transform: rotate(-35deg);
+  margin: 14px 14px;
 }
 
 .title-gif {
@@ -95,7 +92,7 @@ a:hover {
 .site-subtitle {
   bottom: 8px;
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: clamp(16px, 2.4vw, 21px);
   left: 0;
   letter-spacing: 0.02em;
@@ -114,7 +111,7 @@ a:hover {
 
 .forum-nav a {
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 14px;
 }
 
@@ -135,7 +132,7 @@ a:hover {
   background: var(--void-header);
   border-bottom: 2px solid #2c2948;
   display: flex;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   justify-content: space-between;
   min-height: 28px;
   padding: 3px 10px;
@@ -227,13 +224,13 @@ a:hover {
 .recent-row p,
 .compact-panel p {
   color: var(--void-muted);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   margin: 0;
 }
 
 .forum-title {
   display: inline-block;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: clamp(20px, 3vw, 24px);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -242,14 +239,14 @@ a:hover {
 
 .forum-count {
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 18px;
   text-align: right;
 }
 
 .username {
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
 }
 
 .side-stack {
@@ -259,7 +256,7 @@ a:hover {
 }
 
 .compact-panel {
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 13px;
 }
 
@@ -326,7 +323,7 @@ a:hover {
 
 .auth-member-card small {
   color: var(--void-muted);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
 }
 
 .auth-member-card .auth-button {
@@ -345,7 +342,7 @@ a:hover {
 
 .auth-field span {
   color: var(--void-muted);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 11px;
 }
 
@@ -368,7 +365,7 @@ a:hover {
 .auth-button {
   border: 2px outset #8f8f9d;
   cursor: pointer;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 12px;
   padding: 4px 6px;
   text-align: center;
@@ -399,7 +396,7 @@ a:hover {
   border-bottom: 1px solid var(--void-edge);
   border-top: 1px solid #050812;
   color: var(--void-muted);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 11px;
   padding: 5px 0;
   text-align: center;
@@ -407,7 +404,7 @@ a:hover {
 
 .auth-notice {
   border: 1px solid var(--void-edge);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 11px;
   margin: 0;
   padding: 5px;
@@ -447,19 +444,293 @@ a:hover {
 }
 
 .recent-row a {
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 16px;
 }
 
 .recent-row > span {
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   text-align: right;
+}
+
+.thread-panel {
+  margin-top: 10px;
+}
+
+.thread-heading {
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.thread-heading h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.thread-heading span {
+  color: var(--void-muted);
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.thread-compose-toggle,
+.thread-compose-submit {
+  background: #668a4f;
+  border: 2px outset #8f8f9d;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.thread-compose-toggle:active,
+.thread-compose-submit:active {
+  border-style: inset;
+}
+
+.sort-control {
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.sort-control span {
+  color: var(--void-muted);
+}
+
+.sort-control select {
+  background: #f4f1ff;
+  border: 2px inset #8f8f9d;
+  color: #020617;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.compose-form {
+  border-bottom: 1px solid var(--void-rule);
+  display: grid;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.compose-field {
+  display: grid;
+  gap: 4px;
+}
+
+.compose-field span {
+  color: var(--void-muted);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.compose-field input,
+.compose-field textarea {
+  background: #f4f1ff;
+  border: 2px inset #8f8f9d;
+  color: #020617;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  min-width: 0;
+  padding: 4px 6px;
+}
+
+.compose-field textarea {
+  resize: vertical;
+}
+
+.compose-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.compose-field input:disabled,
+.compose-field textarea:disabled,
+.thread-compose-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.thread-list {
+  display: grid;
+}
+
+.thread-row {
+  align-items: start;
+  background: var(--void-panel-alt);
+  border-bottom: 1px solid var(--void-rule);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  padding: 10px 12px;
+}
+
+.thread-row:nth-child(even) {
+  background: var(--void-panel);
+}
+
+.thread-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.thread-title {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.thread-copy p,
+.thread-copy small,
+.thread-empty,
+.post-body p,
+.comment-row p,
+.comment-meta {
+  color: var(--void-muted);
+  font-family: 'Courier New', monospace;
+  margin: 0;
+}
+
+.thread-badges {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  text-align: right;
+}
+
+.thread-post-actions {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+
+.vote-controls {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.vote-button {
+  background: #10162a;
+  border: 1px outset #8f8f9d;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  height: 20px;
+  line-height: 1;
+  padding: 0 5px;
+}
+
+.vote-button:active {
+  border-style: inset;
+}
+
+.vote-button-active {
+  background: #e8c547;
+  color: #03040e;
+}
+.vote-button:disabled {
+  cursor: not-allowed;
+}
+
+.vote-score {
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  min-width: 2ch;
+  text-align: center;
+}
+
+.thread-action-button {
+  background: #7e3b43;
+  border: 1px outset #8f8f9d;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  height: 20px;
+  line-height: 1;
+  padding: 0 6px;
+}
+
+.thread-action-button:active {
+  border-style: inset;
+}
+
+.thread-action-button:disabled {
+  cursor: not-allowed;
+}
+
+.vote-state {
+  color: var(--void-muted);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.thread-badges span {
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.post-body,
+.comments-block {
+  border-top: 1px solid var(--void-rule);
+  padding: 12px;
+}
+
+.post-body p {
+  color: var(--void-text);
+  line-height: 1.5;
+}
+
+.comment-form {
+  border-top: 1px solid var(--void-rule);
+  margin-top: 0;
+}
+
+.comment-list {
+  display: grid;
+}
+
+.comment-row {
+  border-top: 1px solid var(--void-rule);
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+}
+
+.comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.comment-row .vote-controls {
+  justify-self: start;
+}
+
+.comment-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.thread-empty {
+  padding: 12px;
 }
 
 .site-footer {
   color: #fff;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 12px;
   padding: 12px 4px 0;
   text-align: center;
@@ -490,5 +761,22 @@ a:hover {
 
   .forum-count {
     font-size: 14px;
+  }
+
+  .thread-row {
+    grid-template-columns: 1fr;
+  }
+
+  .thread-badges {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .sort-control {
+    justify-items: start;
+  }
+
+  .thread-heading {
+    align-items: start;
   }
 }

@@ -1,9 +1,14 @@
+import { useState } from 'react'
+
 import { convexQuery } from '@convex-dev/react-query'
+import { useConvexAuth } from '@convex-dev/auth/react'
+import { useMutation } from 'convex/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { api } from '../../convex/_generated/api'
 import { AuthPanel } from '../components/organisms/AuthPanel'
+import { errorMessage } from '../lib/forum'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -12,12 +17,16 @@ export const Route = createFileRoute('/')({
 function Home() {
   const { data: forums } = useSuspenseQuery(convexQuery(api.forums.list, {}))
   const { data: recentPosts } = useSuspenseQuery(convexQuery(api.posts.recent, {}))
+  const { isAuthenticated } = useConvexAuth()
+  const createForum = useMutation(api.forums.create)
+  const navigate = useNavigate()
+  const [error, setError] = useState<string | null>(null)
 
   return (
     <main className="forum-shell">
       <header className="site-header">
-        <div className="space-badge" aria-hidden="true">
-          BM
+        <div className="space-badger" aria-hidden="true">
+          <img src="./badger.png" alt="badger image" />
         </div>
         <img
           className="title-gif"
@@ -29,9 +38,7 @@ function Home() {
 
       <nav className="forum-nav" aria-label="Primary navigation">
         <a href="/">Home</a>
-        <a href="/">Forum Index</a>
         <a href="/">Members</a>
-        <a href="/">Archive</a>
       </nav>
 
       <div className="forum-layout">
@@ -50,6 +57,12 @@ function Home() {
                     {forum.title}
                   </a>
                   <p>{forum.description}</p>
+                  <small>
+                    Owner: <span className="username">{forum.creatorUsername}</span>
+                    {(forum.moderatorUsernames ?? []).length > 0 ? (
+                      <> / Mods: {(forum.moderatorUsernames ?? []).join(', ')}</>
+                    ) : null}
+                  </small>
                   {forum.lastPost ? (
                     <small>
                       Last signal: {forum.lastPost.title} by{' '}
@@ -66,6 +79,59 @@ function Home() {
         </section>
 
         <aside className="side-stack" aria-label="Forum sidebar">
+          <section className="forum-panel compact-panel">
+            <div className="panel-heading">
+              <h2>Create Board</h2>
+            </div>
+            {error ? <p className="thread-empty">{error}</p> : null}
+            {!isAuthenticated ? <p className="thread-empty">Sign in to create a board.</p> : null}
+            <form
+              className="compose-form"
+              onSubmit={async (event) => {
+                event.preventDefault()
+                setError(null)
+
+                const form = event.currentTarget
+                const formData = new FormData(form)
+                const title = String(formData.get('title') ?? '').trim()
+                const description = String(formData.get('description') ?? '').trim()
+
+                if (!title || !description) {
+                  setError('Board title and description are required.')
+                  return
+                }
+
+                try {
+                  const result = await createForum({ title, description })
+                  form.reset()
+                  await navigate({ to: `/forums/${result.slug}` })
+                } catch (caughtError) {
+                  setError(errorMessage(caughtError, 'Could not create board.'))
+                }
+              }}
+            >
+              <label className="compose-field">
+                <span>Board title</span>
+                <input
+                  name="title"
+                  type="text"
+                  maxLength={80}
+                  required
+                  disabled={!isAuthenticated}
+                />
+              </label>
+              <label className="compose-field">
+                <span>Description</span>
+                <textarea name="description" rows={4} required disabled={!isAuthenticated} />
+              </label>
+              <div className="compose-actions">
+                <button className="thread-compose-submit" type="submit" disabled={!isAuthenticated}>
+                  Create board
+                </button>
+              </div>
+            </form>
+          </section>
+
           <AuthPanel />
 
           <section className="forum-panel compact-panel">

@@ -37,13 +37,8 @@ async function authIdentity(
 export const current = query({
   args: {},
   handler: async (ctx) => {
-    console.log("server identity", await ctx.auth.getUserIdentity());
-    console.log(`context: ${JSON.stringify(ctx)}`);
     const userId = await getAuthUserId(ctx);
-
-    console.log(`USERID: ${userId}`);
     const identity = await authIdentity(ctx);
-    console.log(identity);
 
     if (!userId) {
       return null;
