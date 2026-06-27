@@ -89,6 +89,7 @@ export const initialize = mutation({
           category: 'Forum',
           sortOrder: 1,
           icon: 'folder',
+          creatorId: daneel,
         },
         {
           title: '/ORBITAL_ANOMALIES',
@@ -97,6 +98,7 @@ export const initialize = mutation({
           category: 'Forum',
           sortOrder: 2,
           icon: 'planet',
+          creatorId: sherlock,
         },
         {
           title: '/DEEP_FIELD_GHOSTS',
@@ -105,6 +107,7 @@ export const initialize = mutation({
           category: 'Forum',
           sortOrder: 3,
           icon: 'comet',
+          creatorId: eliza,
         },
         {
           title: '/THE_UPKEEP',
@@ -113,18 +116,34 @@ export const initialize = mutation({
           category: 'Forum',
           sortOrder: 4,
           icon: 'news',
+          creatorId: daneel,
         },
       ].map((forum) => ctx.db.insert('forums', forum)),
     )
 
     const [signalLoss, orbitalAnomalies, deepFieldGhosts, upkeep] = forums
 
+    await Promise.all(
+      [
+        { forumId: signalLoss, userId: daneel },
+        { forumId: orbitalAnomalies, userId: sherlock },
+        { forumId: deepFieldGhosts, userId: eliza },
+        { forumId: upkeep, userId: daneel },
+      ].map((moderator) =>
+        ctx.db.insert('forumModerators', {
+          ...moderator,
+          addedAt: now,
+        }),
+      ),
+    )
+
     const posts = [
       {
         authorId: daneel,
         forumId: signalLoss,
         title: 'WELCOME: Read before posting sightings',
-        content: 'Please include date, location, weather, witnesses, and whether you had been at The Black Badger beforehand.',
+        content:
+          'Please include date, location, weather, witnesses, and whether you had been at The Black Badger beforehand.',
         createdAt: now - 21 * DAY,
         updatedAt: now - 20 * DAY,
         upvotes: 34,
@@ -160,7 +179,8 @@ export const initialize = mutation({
         authorId: ghostHunter,
         forumId: orbitalAnomalies,
         title: 'Green pulse above Mill Hill at 23:48',
-        content: 'Caught a faint glow on my camcorder. Could be a plane, but it changed direction without banking.',
+        content:
+          'Caught a faint glow on my camcorder. Could be a plane, but it changed direction without banking.',
         createdAt: now - 3 * DAY,
         updatedAt: now - 3 * DAY,
         upvotes: 26,
@@ -184,7 +204,8 @@ export const initialize = mutation({
         authorId: sherlock,
         forumId: orbitalAnomalies,
         title: 'Lanterns, drones, or something worse?',
-        content: 'Before this spirals: compare the churchyard sightings against market-night lantern releases.',
+        content:
+          'Before this spirals: compare the churchyard sightings against market-night lantern releases.',
         createdAt: now - 14 * DAY,
         updatedAt: now - 13 * DAY,
         upvotes: 31,
@@ -220,7 +241,8 @@ export const initialize = mutation({
         authorId: daneel,
         forumId: upkeep,
         title: 'Archive migration complete',
-        content: 'Old witness reports have been copied into the new database. Broken links should be reported here.',
+        content:
+          'Old witness reports have been copied into the new database. Broken links should be reported here.',
         createdAt: now - 1 * DAY,
         updatedAt: now - 1 * DAY,
         upvotes: 12,

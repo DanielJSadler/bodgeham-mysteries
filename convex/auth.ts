@@ -68,6 +68,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         postCount: user.postCount ?? 0,
         reputation: user.reputation ?? 0,
         joinedAt: user.joinedAt ?? Date.now(),
+        lastSeenAt: user.lastSeenAt ?? Date.now(),
       });
     },
   },

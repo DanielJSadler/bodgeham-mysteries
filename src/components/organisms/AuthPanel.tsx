@@ -1,38 +1,42 @@
-import { useState } from "react";
-import { useAuthActions, useConvexAuth } from "@convex-dev/auth/react";
-import { convexQuery } from "@convex-dev/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from 'react'
+import { useAuthActions, useConvexAuth } from '@convex-dev/auth/react'
+import { convexQuery } from '@convex-dev/react-query'
+import { useQuery } from '@tanstack/react-query'
 
-import { api } from "../../../convex/_generated/api";
-import { AuthButton } from "../atoms/AuthButton";
-import { AuthNotice } from "../atoms/AuthNotice";
-import { GithubLoginButton } from "../molecules/GithubLoginButton";
-import { PasswordAuthForm } from "../molecules/PasswordAuthForm";
-import { PasswordResetForm } from "../molecules/PasswordResetForm";
+import { api } from '../../../convex/_generated/api'
+import { AuthButton } from '../atoms/AuthButton'
+import { AuthNotice } from '../atoms/AuthNotice'
+import { GithubLoginButton } from '../molecules/GithubLoginButton'
+import { PasswordAuthForm } from '../molecules/PasswordAuthForm'
+import { PasswordResetForm } from '../molecules/PasswordResetForm'
 
-type AuthMode = "login" | "reset";
+type AuthMode = 'login' | 'reset'
 
-export function AuthPanel() {
-  const { isAuthenticated, isLoading } = useConvexAuth();
-  const { signOut } = useAuthActions();
+type AuthPanelProps = {
+  title?: string
+}
+
+export function AuthPanel({ title = 'Member Access' }: AuthPanelProps) {
+  const { isAuthenticated, isLoading } = useConvexAuth()
+  const { signOut } = useAuthActions()
   const { data: currentUser } = useQuery(
-    convexQuery(api.users.current, isAuthenticated ? {} : "skip"),
-  );
-  const [mode, setMode] = useState<AuthMode>("login");
+    convexQuery(api.users.current, isAuthenticated ? {} : 'skip'),
+  )
+  const [mode, setMode] = useState<AuthMode>('login')
   const [notice, setNotice] = useState<{
-    tone: "error" | "info" | "success";
-    message: string;
-  } | null>(null);
+    tone: 'error' | 'info' | 'success'
+    message: string
+  } | null>(null)
 
   if (isLoading || (isAuthenticated && currentUser === undefined)) {
     return (
       <section className="forum-panel compact-panel auth-panel">
         <div className="panel-heading">
-          <h2>Member Access</h2>
+          <h2>{title}</h2>
         </div>
         <p>Checking session...</p>
       </section>
-    );
+    )
   }
 
   if (isAuthenticated) {
@@ -49,7 +53,7 @@ export function AuthPanel() {
     return (
       <section className="forum-panel compact-panel auth-panel">
         <div className="panel-heading">
-          <h2>Member Access</h2>
+          <h2>{title}</h2>
         </div>
         <div className="auth-member-card">
           <p>Username</p>
@@ -67,26 +71,26 @@ export function AuthPanel() {
           </AuthButton>
         </div>
       </section>
-    );
+    )
   }
 
   return (
     <section className="forum-panel compact-panel auth-panel">
       <div className="panel-heading">
-        <h2>Member Access</h2>
+        <h2>{title}</h2>
       </div>
       <div className="auth-panel-body">
         {notice ? (
           <AuthNotice tone={notice.tone}>{notice.message}</AuthNotice>
         ) : null}
-        {mode === "login" ? (
+        {mode === 'login' ? (
           <>
             <GithubLoginButton
-              onError={(message) => setNotice({ tone: "error", message })}
+              onError={(message) => setNotice({ tone: 'error', message })}
             />
             <div className="auth-divider">or email/password</div>
             <PasswordAuthForm
-              onError={(message) => setNotice({ tone: "error", message })}
+              onError={(message) => setNotice({ tone: 'error', message })}
             />
             <AuthButton
               type="button"
@@ -99,8 +103,8 @@ export function AuthPanel() {
         ) : (
           <>
             <PasswordResetForm
-              onError={(message) => setNotice({ tone: "error", message })}
-              onSuccess={(message) => setNotice({ tone: "success", message })}
+              onError={(message) => setNotice({ tone: 'error', message })}
+              onSuccess={(message) => setNotice({ tone: 'success', message })}
             />
             <AuthButton
               type="button"
@@ -113,5 +117,5 @@ export function AuthPanel() {
         )}
       </div>
     </section>
-  );
+  )
 }

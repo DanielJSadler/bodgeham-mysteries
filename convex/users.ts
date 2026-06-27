@@ -37,13 +37,8 @@ async function authIdentity(
 export const current = query({
   args: {},
   handler: async (ctx) => {
-    console.log("server identity", await ctx.auth.getUserIdentity());
-    console.log(`context: ${JSON.stringify(ctx)}`);
     const userId = await getAuthUserId(ctx);
-
-    console.log(`USERID: ${userId}`);
     const identity = await authIdentity(ctx);
-    console.log(identity);
 
     if (!userId) {
       return null;
@@ -62,6 +57,7 @@ export const current = query({
         role: "member" as const,
         postCount: 0,
         reputation: 0,
+        lastSeenAt: Date.now(),
       };
     }
 
@@ -77,7 +73,48 @@ export const current = query({
       role: user.role ?? "member",
       postCount: user.postCount ?? 0,
       reputation: user.reputation ?? 0,
+      lastSeenAt: user.lastSeenAt ?? null,
     };
+  },
+});
+
+export const online = query({
+  args: {},
+  handler: async (ctx) => {
+    const cutoff = Date.now() - 5 * 60 * 1000;
+    const users = await ctx.db.query('users').collect();
+
+    return users
+      .filter((user) => (user.lastSeenAt ?? 0) >= cutoff)
+      .sort(
+        (a, b) =>
+          (b.lastSeenAt ?? 0) - (a.lastSeenAt ?? 0) ||
+          (a.username ?? a.name ?? a.email ?? 'Unknown').localeCompare(
+            b.username ?? b.name ?? b.email ?? 'Unknown',
+          ),
+      )
+      .map((user) => ({
+        _id: user._id,
+        username: user.username ?? user.name ?? user.email ?? 'Unknown',
+        lastSeenAt: user.lastSeenAt ?? null,
+      }));
+  },
+});
+
+export const touchActivity = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return null;
+    }
+
+    await ctx.db.patch(userId, {
+      lastSeenAt: Date.now(),
+    });
+
+    return null;
   },
 });
 
@@ -103,5 +140,42 @@ export const updateReputation = mutation({
     await ctx.db.patch(args.userId, {
       reputation: (user.reputation ?? 0) + args.delta,
     });
+  },
+});
+
+export const touchPresence = mutation({
+  args: {
+    visitorId: v.string(),
+    username: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const existing = await ctx.db
+      .query('visitorSessions')
+      .withIndex('by_visitor', (q) => q.eq('visitorId', args.visitorId))
+      .unique();
+
+    const next = {
+      visitorId: args.visitorId,
+      lastSeenAt: now,
+      ...(args.username ? { username: args.username } : {}),
+    };
+
+    if (existing) {
+      await ctx.db.patch(existing._id, next);
+      return existing._id;
+    }
+
+    return await ctx.db.insert('visitorSessions', next);
+  },
+});
+
+export const onlineCount = query({
+  args: {},
+  handler: async (ctx) => {
+    const cutoff = Date.now() - 5 * 60 * 1000;
+    const sessions = await ctx.db.query('visitorSessions').collect();
+
+    return sessions.filter((session) => session.lastSeenAt >= cutoff).length;
   },
 });
