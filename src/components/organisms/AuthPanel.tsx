@@ -3,7 +3,7 @@ import { useAuthActions, useConvexAuth } from '@convex-dev/auth/react'
 import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
 
-import { api } from '@convex/_generated/api'
+import { api } from '../../../convex/_generated/api'
 import { AuthButton } from '../atoms/AuthButton'
 import { AuthNotice } from '../atoms/AuthNotice'
 import { GithubLoginButton } from '../molecules/GithubLoginButton'

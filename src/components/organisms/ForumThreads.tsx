@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useConvexAuth } from '@convex-dev/auth/react'
 import { useNavigate } from '@tanstack/react-router'
 
-import type { Id } from '@convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 import type { ForumThread } from '../../lib/forum'
 import { Pagination } from '../atoms/Pagination'
 import { ForumComposer } from '../molecules/ForumComposer'

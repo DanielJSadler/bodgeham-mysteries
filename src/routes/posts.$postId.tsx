@@ -2,8 +2,8 @@ import { convexQuery } from '@convex-dev/react-query'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { api } from '@convex/_generated/api'
-import type { Id } from '@convex/_generated/dataModel'
+import { api } from '../../convex/_generated/api'
+import type { Id } from '../../convex/_generated/dataModel'
 import { SiteHeader } from '../components/organisms/SiteHeader'
 import { ThreadView } from '../components/organisms/ThreadView'
 
