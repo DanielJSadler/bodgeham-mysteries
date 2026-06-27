@@ -10,8 +10,7 @@
     "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
-      "@convex/*": ["./convex/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": ["src", "convex", "vite.config.ts"]

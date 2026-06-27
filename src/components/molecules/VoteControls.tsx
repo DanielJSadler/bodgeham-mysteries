@@ -1,8 +1,8 @@
 import { useConvexAuth } from '@convex-dev/auth/react'
 import { useMutation } from 'convex/react'
 
-import { api } from '@convex/_generated/api'
-import type { Id } from '@convex/_generated/dataModel'
+import { api } from '../../../convex/_generated/api'
+import type { Id } from '../../../convex/_generated/dataModel'
 import type { VoteValue } from '../../lib/forum'
 import { voteScore } from '../../lib/forum'
 
