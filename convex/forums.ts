@@ -47,6 +47,14 @@ async function forumOwnerUsername(ctx: QueryCtx, forum: Doc<'forums'>) {
   return displayName(await ctx.db.get(firstModerator.userId))
 }
 
+async function forumIconUrl(ctx: QueryCtx, forum: Doc<'forums'>) {
+  if (!forum.iconStorageId) {
+    return null
+  }
+
+  return await ctx.storage.getUrl(forum.iconStorageId)
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -63,11 +71,13 @@ export const list = query({
         const author = lastPost ? await ctx.db.get(lastPost.authorId) : null
         const moderatorUsernames = await forumModerators(ctx, forum._id)
         const creatorUsername = await forumOwnerUsername(ctx, forum)
+        const iconUrl = await forumIconUrl(ctx, forum)
 
         return {
           ...forum,
           creatorUsername,
           moderatorUsernames,
+          iconUrl,
           postCount: posts.length,
           lastPost: lastPost
             ? {
@@ -100,6 +110,7 @@ export const getBySlug = query({
     const [matchedForum] = forum
     const moderatorUsernames = await forumModerators(ctx, matchedForum._id)
     const creatorUsername = await forumOwnerUsername(ctx, matchedForum)
+    const iconUrl = await forumIconUrl(ctx, matchedForum)
 
     const posts = await ctx.db
       .query('posts')
@@ -110,6 +121,7 @@ export const getBySlug = query({
       ...matchedForum,
       creatorUsername,
       moderatorUsernames,
+      iconUrl,
       postCount: posts.length,
     }
   },
@@ -119,6 +131,7 @@ export const create = mutation({
   args: {
     title: v.string(),
     description: v.string(),
+    iconStorageId: v.optional(v.id('_storage')),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -159,6 +172,7 @@ export const create = mutation({
       category: 'Forum',
       sortOrder,
       icon: 'folder',
+      iconStorageId: args.iconStorageId,
       creatorId: userId,
     })
 

@@ -7,6 +7,7 @@ import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { forumSortOptions, sortForumThreads, type ForumSortMode } from '../../lib/forum'
 import { SortSelect } from '../molecules/SortSelect'
+import { SiteHeader } from './SiteHeader'
 import { ForumThreads } from './ForumThreads'
 
 type ForumPageProps = {
@@ -32,22 +33,14 @@ export function ForumPage({
 
   return (
     <main className="forum-shell">
-      <header className="site-header forum-header">
-        <div className="space-badge" aria-hidden="true">
-          BM
-        </div>
-        <img
-          className="title-gif"
-          src="https://images.cooltext.com/5753289.gif"
-          alt="Bodgeham Mysteries"
-        />
-        <p className="site-subtitle">{forumTitle} / Active Threads</p>
-      </header>
-
-      <nav className="forum-nav" aria-label="Forum navigation">
-        <a href="/">Index</a>
-        <a href={`/forums/${forumSlug}`}>Refresh board</a>
-      </nav>
+      <SiteHeader
+        subtitle={`${forumTitle} / Active Threads`}
+        navLabel="Forum navigation"
+        navItems={[
+          { href: '/', label: 'Index' },
+          { href: `/forums/${forumSlug}`, label: 'Refresh board' },
+        ]}
+      />
 
       <section className="forum-panel thread-panel">
         <div className="panel-heading thread-heading">

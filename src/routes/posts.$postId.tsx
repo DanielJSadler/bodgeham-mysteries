@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
+import { SiteHeader } from '../components/organisms/SiteHeader'
 import { ThreadView } from '../components/organisms/ThreadView'
 
 export const Route = createFileRoute('/posts/$postId')({
@@ -19,6 +20,11 @@ function PostPage() {
   if (!post) {
     return (
       <main className="forum-shell">
+        <SiteHeader
+          subtitle="Thread not found"
+          navLabel="Thread navigation"
+          navItems={[{ href: '/', label: 'Index' }]}
+        />
         <section className="forum-panel thread-panel">
           <div className="panel-heading">
             <h1>Thread not found</h1>
@@ -31,22 +37,14 @@ function PostPage() {
 
   return (
     <main className="forum-shell">
-      <header className="site-header forum-header">
-        <div className="space-badge" aria-hidden="true">
-          BM
-        </div>
-        <img
-          className="title-gif"
-          src="https://images.cooltext.com/5753289.gif"
-          alt="Bodgeham Mysteries"
-        />
-        <p className="site-subtitle">Thread / {post.forumTitle}</p>
-      </header>
-
-      <nav className="forum-nav" aria-label="Thread navigation">
-        <a href="/">Index</a>
-        <a href={`/forums/${post.forumSlug}`}>Back to forum</a>
-      </nav>
+      <SiteHeader
+        subtitle={`Thread / ${post.forumTitle}`}
+        navLabel="Thread navigation"
+        navItems={[
+          { href: '/', label: 'Index' },
+          { href: `/forums/${post.forumSlug}`, label: 'Back to forum' },
+        ]}
+      />
 
       <ThreadView post={post} />
     </main>

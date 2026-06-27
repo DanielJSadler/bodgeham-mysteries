@@ -1,4 +1,9 @@
-export async function uploadImageFile(file: File, generateUploadUrl: () => Promise<string>) {
+import type { Id } from '../../convex/_generated/dataModel'
+
+export async function uploadImageFile(
+  file: File,
+  generateUploadUrl: () => Promise<string>,
+): Promise<Id<'_storage'>> {
   const uploadUrl = await generateUploadUrl()
   const response = await fetch(uploadUrl, {
     method: 'POST',
@@ -11,5 +16,5 @@ export async function uploadImageFile(file: File, generateUploadUrl: () => Promi
   }
 
   const result = (await response.json()) as { storageId: string }
-  return result.storageId
+  return result.storageId as Id<'_storage'>
 }

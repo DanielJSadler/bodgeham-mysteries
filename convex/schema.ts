@@ -32,6 +32,7 @@ export default defineSchema({
     category: v.string(),
     sortOrder: v.number(),
     icon: v.string(),
+    iconStorageId: v.optional(v.id('_storage')),
     creatorId: v.optional(v.id('users')),
     creatorUsername: v.optional(v.string()),
     moderatorId: v.optional(v.id('users')),

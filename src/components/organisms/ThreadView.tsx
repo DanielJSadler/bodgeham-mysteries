@@ -12,6 +12,7 @@ import type { ForumPost } from '../../lib/forum'
 import type { ForumComment } from '../../lib/forum'
 import { forumSortOptions, formatForumDate, type ForumSortMode } from '../../lib/forum'
 import { CommentComposer } from '../molecules/CommentComposer'
+import { ModalImage } from '../molecules/ModalImage'
 import { SortSelect } from '../molecules/SortSelect'
 import { VoteControls } from '../molecules/VoteControls'
 
@@ -48,7 +49,9 @@ function CommentItem({
         <span>{formatForumDate(comment.createdAt)}</span>
       </div>
       <p>{comment.content || '[deleted]'}</p>
-      {comment.imageUrl ? <img className="comment-image" src={comment.imageUrl} alt="Comment attachment" /> : null}
+      {comment.imageUrl ? (
+        <ModalImage className="comment-image" src={comment.imageUrl} alt="Comment attachment" />
+      ) : null}
       <div className="comment-actions">
         <VoteControls
           kind="comment"
@@ -220,7 +223,9 @@ export function ThreadView({ post }: ThreadViewProps) {
       </div>
 
       <article className="post-body">
-        {post.imageUrl ? <img className="post-image" src={post.imageUrl} alt="Post attachment" /> : null}
+        {post.imageUrl ? (
+          <ModalImage className="post-image" src={post.imageUrl} alt="Post attachment" />
+        ) : null}
         <p>{post.content}</p>
       </article>
 

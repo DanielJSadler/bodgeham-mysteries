@@ -4,6 +4,7 @@ import { useMutation } from 'convex/react'
 
 import { api } from '../../../convex/_generated/api'
 import { formatForumDate, previewForumContent, type ForumThread } from '../../lib/forum'
+import { ModalImage } from '../molecules/ModalImage'
 import { VoteControls } from '../molecules/VoteControls'
 
 type ForumThreadListProps = {
@@ -24,7 +25,9 @@ export function ForumThreadList({ posts }: ForumThreadListProps) {
               <a className="thread-title" href={`/posts/${post._id}`}>
                 {post.title}
               </a>
-              {post.imageUrl ? <img className="post-image" src={post.imageUrl} alt="Post attachment" /> : null}
+               {post.imageUrl ? (
+                 <ModalImage className="post-image" src={post.imageUrl} alt="Post attachment" />
+               ) : null}
               <p>{previewForumContent(post.content)}</p>
               <small>
                 By <span className="username">{post.authorUsername}</span> /{' '}
