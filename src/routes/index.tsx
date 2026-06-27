@@ -6,7 +6,7 @@ import { useMutation } from 'convex/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
-import { api } from '../../convex/_generated/api'
+import { api } from '@convex/_generated/api'
 import { Pagination } from '../components/atoms/Pagination'
 import { CreateAccountPanel } from '../components/organisms/CreateAccountPanel'
 import { CreateBoardPanel } from '../components/organisms/CreateBoardPanel'

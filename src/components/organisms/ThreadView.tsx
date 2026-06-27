@@ -7,7 +7,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
 import { useConvex } from 'convex/react'
 
-import { api } from '../../../convex/_generated/api'
+import { api } from '@convex/_generated/api'
 import type { ForumPost } from '../../lib/forum'
 import type { ForumComment } from '../../lib/forum'
 import { forumSortOptions, formatForumDate, type ForumSortMode } from '../../lib/forum'
