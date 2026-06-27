@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
@@ -8,6 +9,10 @@ export default defineConfig({
     port: 3000,
   },
   resolve: {
+    alias: {
+      '@convex': fileURLToPath(new URL('./convex', import.meta.url)),
+      '~': fileURLToPath(new URL('./src', import.meta.url)),
+    },
     tsconfigPaths: true,
   },
   plugins: [tailwindcss(), tanstackStart(), react()],
