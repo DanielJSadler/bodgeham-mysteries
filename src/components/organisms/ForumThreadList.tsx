@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { useMutation } from 'convex/react'
 
-import { api } from '../../../convex/_generated/api'
+import { api } from '@convex/_generated/api'
 import { formatForumDate, previewForumContent, type ForumThread } from '../../lib/forum'
 import { ModalImage } from '../molecules/ModalImage'
 import { VoteControls } from '../molecules/VoteControls'

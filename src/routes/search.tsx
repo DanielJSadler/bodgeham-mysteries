@@ -2,7 +2,7 @@ import { convexQuery } from '@convex-dev/react-query'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { api } from '../../convex/_generated/api'
+import { api } from '@convex/_generated/api'
 import { SearchPanel } from '../components/organisms/SearchPanel'
 import { SiteHeader } from '../components/organisms/SiteHeader'
 import { formatForumDate, previewForumContent } from '../lib/forum'
