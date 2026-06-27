@@ -882,6 +882,43 @@ a:hover {
   text-align: center;
 }
 
+.search-results-panel {
+  margin-top: 10px;
+}
+
+.search-group {
+  border-top: 1px solid var(--void-rule);
+}
+
+.search-list {
+  display: grid;
+}
+
+.search-result-row {
+  align-items: start;
+  background: var(--void-panel-alt);
+  border-bottom: 1px solid var(--void-rule);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 88px;
+  padding: 10px 12px;
+}
+
+.search-result-row:nth-child(even) {
+  background: var(--void-panel);
+}
+
+.search-result-row p,
+.search-result-row small {
+  color: var(--void-muted);
+  font-family: 'Courier New', monospace;
+  margin: 0;
+}
+
+.search-result-row .thread-title {
+  margin-bottom: 4px;
+}
+
 @media (max-width: 760px) {
   .forum-shell {
     padding-inline: 6px;
