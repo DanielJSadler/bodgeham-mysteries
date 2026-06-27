@@ -747,6 +747,13 @@ a:hover {
   padding: 10px 12px;
 }
 
+.post-image,
+.comment-image {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
 .comment-replies {
   border-left: 1px solid var(--void-rule);
   display: grid;

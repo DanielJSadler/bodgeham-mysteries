@@ -48,6 +48,7 @@ function CommentItem({
         <span>{formatForumDate(comment.createdAt)}</span>
       </div>
       <p>{comment.content || '[deleted]'}</p>
+      {comment.imageUrl ? <img className="comment-image" src={comment.imageUrl} alt="Comment attachment" /> : null}
       <div className="comment-actions">
         <VoteControls
           kind="comment"
@@ -58,7 +59,7 @@ function CommentItem({
         />
         {canReply && isAuthenticated ? (
           <button
-            className={`thread-action-button ${!isReplying && `green-thread-action-button`}`}
+            className="thread-action-button"
             type="button"
             onClick={() => setIsReplying((value) => !value)}
           >
@@ -219,6 +220,7 @@ export function ThreadView({ post }: ThreadViewProps) {
       </div>
 
       <article className="post-body">
+        {post.imageUrl ? <img className="post-image" src={post.imageUrl} alt="Post attachment" /> : null}
         <p>{post.content}</p>
       </article>
 

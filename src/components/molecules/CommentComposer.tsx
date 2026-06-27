@@ -5,6 +5,7 @@ import { useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { errorMessage } from '../../lib/forum'
+import { uploadImageFile } from '../../lib/upload'
 
 type CommentComposerProps = {
   postId: Id<'posts'>
@@ -22,6 +23,7 @@ export function CommentComposer({
   onCreated,
 }: CommentComposerProps) {
   const createComment = useMutation(api.comments.create)
+  const generateUploadUrl = useMutation(api.media.generateUploadUrl)
   const [error, setError] = useState<string | null>(null)
 
   return (
@@ -34,6 +36,8 @@ export function CommentComposer({
 
         const formData = new FormData(form)
         const content = String(formData.get('content') ?? '').trim()
+        const image = formData.get('image')
+        const imageFile = image instanceof File && image.size > 0 ? image : null
 
         if (!content) {
           setError('Comment cannot be empty.')
@@ -41,7 +45,8 @@ export function CommentComposer({
         }
 
         try {
-          await createComment({ postId, parentCommentId, content })
+          const imageStorageId = imageFile ? await uploadImageFile(imageFile, generateUploadUrl) : undefined
+          await createComment({ postId, parentCommentId, content, imageStorageId })
           form.reset()
           onCreated?.()
         } catch (caughtError) {
@@ -54,6 +59,10 @@ export function CommentComposer({
       <label className="compose-field">
         <span>Add a comment</span>
         <textarea name="content" rows={4} required disabled={!isAuthenticated} />
+      </label>
+      <label className="compose-field">
+        <span>Image</span>
+        <input name="image" type="file" accept="image/*" disabled={!isAuthenticated} />
       </label>
       <div className="compose-actions">
         <button className="thread-compose-submit" type="submit" disabled={!isAuthenticated}>

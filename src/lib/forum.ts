@@ -17,6 +17,7 @@ export type ForumThread = {
   _id: Id<'posts'>
   title: string
   content: string
+  imageUrl: string | null
   authorUsername: string
   createdAt: number
   upvotes: number
@@ -30,6 +31,7 @@ export type ForumThread = {
 export type ForumComment = {
   _id: Id<'comments'>
   content: string
+  imageUrl: string | null
   authorUsername: string
   createdAt: number
   upvotes: number

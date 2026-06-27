@@ -19,11 +19,12 @@ export function ForumThreadList({ posts }: ForumThreadListProps) {
       {error ? <p className="thread-empty">{error}</p> : null}
       {posts.length ? (
         posts.map((post) => (
-          <article className="thread-row" key={post._id}>
+            <article className="thread-row" key={post._id}>
             <div className="thread-copy">
               <a className="thread-title" href={`/posts/${post._id}`}>
                 {post.title}
               </a>
+              {post.imageUrl ? <img className="post-image" src={post.imageUrl} alt="Post attachment" /> : null}
               <p>{previewForumContent(post.content)}</p>
               <small>
                 By <span className="username">{post.authorUsername}</span> /{' '}

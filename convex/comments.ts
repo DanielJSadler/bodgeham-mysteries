@@ -51,6 +51,7 @@ async function enrichComment(
   const author = await ctx.db.get(comment.authorId)
   const upvotes = comment.upvotes ?? 0
   const downvotes = comment.downvotes ?? 0
+  const imageUrl = comment.imageStorageId ? await ctx.storage.getUrl(comment.imageStorageId) : null
 
   return {
     ...comment,
@@ -60,6 +61,7 @@ async function enrichComment(
     authorRole: author?.role ?? 'member',
     viewerVote: viewerVote ?? null,
     canDelete,
+    imageUrl,
   }
 }
 
@@ -198,6 +200,7 @@ export const create = mutation({
     postId: v.id('posts'),
     parentCommentId: v.optional(v.id('comments')),
     content: v.string(),
+    imageStorageId: v.optional(v.id('_storage')),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -236,6 +239,7 @@ export const create = mutation({
       postId: args.postId,
       parentCommentId: args.parentCommentId,
       content,
+      imageStorageId: args.imageStorageId,
       createdAt: now,
       updatedAt: now,
       upvotes: 0,
@@ -367,6 +371,10 @@ export const deleteComment = mutation({
       content: '',
       updatedAt: Date.now(),
     })
+
+    if (comment.imageStorageId) {
+      await ctx.storage.delete(comment.imageStorageId)
+    }
 
     return { deleted: true }
   },

@@ -5,6 +5,7 @@ import { useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { errorMessage } from '../../lib/forum'
+import { uploadImageFile } from '../../lib/upload'
 
 type ForumComposerProps = {
   forumId: Id<'forums'>
@@ -14,6 +15,7 @@ type ForumComposerProps = {
 
 export function ForumComposer({ forumId, isAuthenticated, onCreated }: ForumComposerProps) {
   const createPost = useMutation(api.posts.create)
+  const generateUploadUrl = useMutation(api.media.generateUploadUrl)
   const [isOpen, setIsOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,6 +42,8 @@ export function ForumComposer({ forumId, isAuthenticated, onCreated }: ForumComp
             const formData = new FormData(form)
             const title = String(formData.get('title') ?? '').trim()
             const content = String(formData.get('content') ?? '').trim()
+            const image = formData.get('image')
+            const imageFile = image instanceof File && image.size > 0 ? image : null
 
             if (!title || !content) {
               setError('Title and message are required.')
@@ -47,7 +51,8 @@ export function ForumComposer({ forumId, isAuthenticated, onCreated }: ForumComp
             }
 
             try {
-              const result = await createPost({ forumId, title, content })
+              const imageStorageId = imageFile ? await uploadImageFile(imageFile, generateUploadUrl) : undefined
+              const result = await createPost({ forumId, title, content, imageStorageId })
               form.reset()
               setIsOpen(false)
               onCreated(result.postId)
@@ -65,6 +70,10 @@ export function ForumComposer({ forumId, isAuthenticated, onCreated }: ForumComp
           <label className="compose-field">
             <span>Message</span>
             <textarea name="content" rows={5} required disabled={!isAuthenticated} />
+          </label>
+          <label className="compose-field">
+            <span>Image</span>
+            <input name="image" type="file" accept="image/*" disabled={!isAuthenticated} />
           </label>
           <div className="compose-actions">
             <button className="thread-compose-submit" type="submit" disabled={!isAuthenticated}>

@@ -43,12 +43,14 @@ async function enrichPost(
   viewerUserId?: string | null,
 ) {
   const [author, forum] = await Promise.all([ctx.db.get(post.authorId), ctx.db.get(post.forumId)])
+  const imageUrl = post.imageStorageId ? await ctx.storage.getUrl(post.imageStorageId) : null
   const canDelete =
     !!viewerUserId &&
     (post.authorId === viewerUserId || (forum ? await canModerateForum(ctx, forum, viewerUserId) : false))
 
   return {
     ...post,
+    imageUrl,
     authorUsername: author?.username ?? author?.name ?? author?.email ?? 'Unknown',
     authorRole: author?.role ?? 'member',
     forumTitle: forum?.title ?? 'Unknown forum',
@@ -204,6 +206,7 @@ export const create = mutation({
     forumId: v.id('forums'),
     title: v.string(),
     content: v.string(),
+    imageStorageId: v.optional(v.id('_storage')),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -230,6 +233,7 @@ export const create = mutation({
       forumId: args.forumId,
       title,
       content,
+      imageStorageId: args.imageStorageId,
       createdAt: now,
       updatedAt: now,
       upvotes: 0,
@@ -289,6 +293,10 @@ export const deletePost = mutation({
       .withIndex('by_post_created_at', (q) => q.eq('postId', args.postId))
       .collect()
 
+    if (post.imageStorageId) {
+      await ctx.storage.delete(post.imageStorageId)
+    }
+
     for (const comment of comments) {
       const commentVotes = await ctx.db
         .query('commentVotes')
@@ -301,6 +309,10 @@ export const deletePost = mutation({
       )
 
       const commentAuthor = await ctx.db.get(comment.authorId)
+
+      if (comment.content && comment.imageStorageId) {
+        await ctx.storage.delete(comment.imageStorageId)
+      }
 
       if (commentAuthor && commentReputationDelta !== 0) {
         await ctx.db.patch(comment.authorId, {
